@@ -1,8 +1,14 @@
 [workspace]
 members = [
     "node",
-    "pallets/template",
+    "pallets/verifier",
     "runtime",
+	"contracts/factors_verifier",
 ]
+
+exclude = [
+    "provers",
+]
+
 [profile.release]
 panic = "unwind"

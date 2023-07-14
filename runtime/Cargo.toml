@@ -6,7 +6,7 @@ homepage = "https://substrate.io/"
 license = "MIT-0"
 name = "zink-node-runtime"
 publish = false
-repository = "https://github.com/substrate-developer-hub/substrate-node-template/"
+repository = "https://github.com/SkymanOne/zink"
 version = "4.0.0-dev"
 
 [package.metadata.docs.rs]
@@ -58,7 +58,7 @@ pallet-contracts-primitives = {version = "7.0.0", default-features = false, git 
 pallet-assets-chain-extension = {git = "https://github.com/727-Ventures/pallet-assets-chain-extension", default-features = false, features = ["substrate"], branch = "polkadot-v0.9.43"}
 
 # Local Dependencies
-pallet-template = {version = "4.0.0-dev", default-features = false, path = "../pallets/template"}
+pallet-verifier = {version = "4.0.0-dev", default-features = false, path = "../pallets/verifier"}
 
 [build-dependencies]
 substrate-wasm-builder = {version = "5.0.0-dev", git = "https://github.com/paritytech/substrate.git", optional = true, branch = "polkadot-v0.9.43"}
@@ -71,8 +71,10 @@ runtime-benchmarks = [
   "frame-system-benchmarking/runtime-benchmarks",
   "frame-system/runtime-benchmarks",
   "pallet-balances/runtime-benchmarks",
+  "pallet-contracts/runtime-benchmarks",
+  "pallet-assets/runtime-benchmarks",
   "pallet-grandpa/runtime-benchmarks",
-  "pallet-template/runtime-benchmarks",
+  "pallet-verifier/runtime-benchmarks",
   "pallet-timestamp/runtime-benchmarks",
   "sp-runtime/runtime-benchmarks",
 ]
@@ -92,7 +94,7 @@ std = [
   "pallet-insecure-randomness-collective-flip/std",
   "pallet-grandpa/std",
   "pallet-sudo/std",
-  "pallet-template/std",
+  "pallet-verifier/std",
   "pallet-timestamp/std",
   "pallet-transaction-payment-rpc-runtime-api/std",
   "pallet-transaction-payment/std",
@@ -123,7 +125,11 @@ try-runtime = [
   "pallet-balances/try-runtime",
   "pallet-grandpa/try-runtime",
   "pallet-sudo/try-runtime",
-  "pallet-template/try-runtime",
+  "pallet-verifier/try-runtime",
   "pallet-timestamp/try-runtime",
   "pallet-transaction-payment/try-runtime",
+  "pallet-contracts/try-runtime",
+  "pallet-assets/try-runtime",
+  "pallet-insecure-randomness-collective-flip/try-runtime",
+  "pallet-utility/try-runtime",
 ]
