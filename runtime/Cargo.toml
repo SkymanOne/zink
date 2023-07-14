@@ -1,10 +1,10 @@
 [package]
-authors = ["Substrate DevHub <https://github.com/substrate-developer-hub>"]
+authors = ["German Nikolishin <german.nikolishin@gmail.com>"]
 description = "A fresh FRAME-based Substrate node, ready for hacking."
 edition = "2021"
 homepage = "https://substrate.io/"
 license = "MIT-0"
-name = "node-template-runtime"
+name = "zink-node-runtime"
 publish = false
 repository = "https://github.com/substrate-developer-hub/substrate-node-template/"
 version = "4.0.0-dev"
