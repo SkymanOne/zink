@@ -1,0 +1,6 @@
+{
+    "Nickname": {
+      "first": "BoundedVec<u8>",
+      "last": "Option<BoundedVec<u8>>"
+    }
+  }
