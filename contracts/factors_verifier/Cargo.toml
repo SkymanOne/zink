@@ -5,13 +5,14 @@ authors = ["[your_name] <[your_email]>"]
 edition = "2021"
 
 [dependencies]
-ink = { version = "4.2.0", default-features = false }
+ink = { git = "https://github.com/paritytech/ink", branch = "gn/larger-buffer", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2.6", default-features = false, features = ["derive"], optional = true }
+risc0-zkvm = { git = "https://github.com/SkymanOne/risc0", default-features = false }
 
 [dev-dependencies]
-ink_e2e = "4.2.0"
+ink_e2e = { git = "https://github.com/paritytech/ink", branch = "gn/larger-buffer" }
 
 [lib]
 path = "lib.rs"
@@ -22,6 +23,7 @@ std = [
     "ink/std",
     "scale/std",
     "scale-info/std",
+	"risc0-zkvm/std",
 ]
 ink-as-dependency = []
 e2e-tests = []

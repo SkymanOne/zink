@@ -16,11 +16,15 @@ mod benchmarking;
 pub mod weights;
 pub use weights::*;
 
-#[frame_support::pallet]
+#[frame_support::pallet(dev_mode)]
 pub mod pallet {
 	use super::*;
+	use frame_support::log::log;
+	use frame_support::log::Level;
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
+	use risc0_zkvm::{serde::from_slice, SessionReceipt};
+	use sp_std::prelude::Vec;
 
 	#[pallet::pallet]
 	pub struct Pallet<T>(_);
@@ -54,11 +58,16 @@ pub mod pallet {
 
 	// Errors inform users that something went wrong.
 	#[pallet::error]
+	#[derive(Clone, Eq, PartialEq)]
 	pub enum Error<T> {
 		/// Error names should be descriptive.
 		NoneValue,
 		/// Errors should have helpful documentation associated with them.
 		StorageOverflow,
+		/// The submitted proof is invalid
+		ProofInvalid,
+		/// Could not decode the receipt from the slice
+		ReceiptInvalid,
 	}
 
 	// Dispatchable functions allows users to interact with the pallet and invoke state changes.
@@ -66,9 +75,27 @@ pub mod pallet {
 	// Dispatchable functions must be annotated with a weight and must return a DispatchResult.
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
+		#[pallet::call_index(0)]
+		// yolo the weight for now
+		#[pallet::weight(10_000)]
+		pub fn verify_call(origin: OriginFor<T>, something: u32) -> DispatchResult {
+			// Check that the extrinsic was signed and get the signer.
+			// This function will return an error if the extrinsic is not signed.
+			// https://docs.substrate.io/main-docs/build/origins/
+			let who = ensure_signed(origin)?;
+
+			// Update storage.
+			<Something<T>>::put(something);
+
+			// Emit an event.
+			Self::deposit_event(Event::SomethingStored { something, who });
+			// Return a successful DispatchResultWithPostInfo
+			Ok(())
+		}
+
 		/// An example dispatchable that takes a singles value as a parameter, writes the value to
 		/// storage and emits an event. This function must be dispatched by a signed extrinsic.
-		#[pallet::call_index(0)]
+		#[pallet::call_index(1)]
 		#[pallet::weight(T::WeightInfo::do_something())]
 		pub fn do_something(origin: OriginFor<T>, something: u32) -> DispatchResult {
 			// Check that the extrinsic was signed and get the signer.
@@ -86,7 +113,7 @@ pub mod pallet {
 		}
 
 		/// An example dispatchable that may throw a custom error.
-		#[pallet::call_index(1)]
+		#[pallet::call_index(3)]
 		#[pallet::weight(T::WeightInfo::cause_error())]
 		pub fn cause_error(origin: OriginFor<T>) -> DispatchResult {
 			let _who = ensure_signed(origin)?;
@@ -103,6 +130,18 @@ pub mod pallet {
 					Ok(())
 				},
 			}
+		}
+	}
+
+	impl<T: Config> Pallet<T> {
+		/// Verifies the proof given the slice of a proof and the image ID
+		pub fn verify(proof_vec: Vec<u32>, image_id: [u32; 8]) -> Result<(), Error<T>> {
+			let receipt: SessionReceipt =
+				from_slice(&proof_vec).map_err(|_| Error::<T>::ReceiptInvalid)?;
+			receipt
+				.verify(image_id)
+				.map_err(|_| Error::<T>::ProofInvalid)
+				.map(|_| log!(Level::Info, "Successfully verified the proof"))
 		}
 	}
 }

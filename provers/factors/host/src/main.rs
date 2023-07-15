@@ -1,28 +1,22 @@
-// TODO: Update the name of the method loaded by the prover. E.g., if the method
-// is `multiply`, replace `METHOD_NAME_ELF` with `MULTIPLY_ELF` and replace
-// `METHOD_NAME_ID` with `MULTIPLY_ID`
-use methods::{METHOD_NAME_ELF, METHOD_NAME_ID};
+use methods::{MULTIPLY_ELF, MULTIPLY_ID};
 use risc0_zkvm::{
     default_executor_from_elf,
+	SessionReceipt,
     serde::{from_slice, to_vec},
     ExecutorEnv,
 };
 
-fn main() {
-    // First, we construct an executor environment
-    let env = ExecutorEnv::builder().build().unwrap();
+// Multiply them inside the ZKP
+pub fn multiply_factors(a: u64, b: u64) -> (SessionReceipt, u64) {
+    let env = ExecutorEnv::builder()
+        // Send a & b to the guest
+        .add_input(&to_vec(&a).unwrap())
+        .add_input(&to_vec(&b).unwrap())
+        .build()
+        .unwrap();
 
-    // TODO: add guest input to the executor environment using
-    // ExecutorEnvBuilder::add_input().
-    // To access this method, you'll need to use the alternate construction
-    // ExecutorEnv::builder(), which creates an ExecutorEnvBuilder. When you're
-    // done adding input, call ExecutorEnvBuilder::build().
-
-    // For example:
-    // let env = ExecutorEnv::builder().add_input(&vec).build().unwrap();
-
-    // Next, we make an executor, loading the (renamed) ELF binary.
-    let mut exec = default_executor_from_elf(env, METHOD_NAME_ELF).unwrap();
+    // First, we make an executor, loading the 'multiply' ELF binary.
+    let mut exec = default_executor_from_elf(env, MULTIPLY_ELF).unwrap();
 
     // Run the executor to produce a session.
     let session = exec.run().unwrap();
@@ -30,10 +24,19 @@ fn main() {
     // Prove the session to produce a receipt.
     let receipt = session.prove().unwrap();
 
-    // TODO: Implement code for transmitting or serializing the receipt for
-    // other parties to verify here
+    // Extract journal of receipt (i.e. output c, where c = a * b)
+    let c: u64 = from_slice(&receipt.journal).expect(
+        "Journal output should deserialize into the same types (& order) that it was written",
+    );
 
-    // Optional: Verify receipt to confirm that recipients will also be able to
-    // verify your receipt
-    receipt.verify(METHOD_NAME_ID).unwrap();
+    // Report the product
+    println!("I know the factors of {}, and I can prove it!", c);
+
+    (receipt, c)
+}
+
+fn main() {
+     // Pick two numbers
+    let (receipt, _) = multiply_factors(17, 23);
+
 }

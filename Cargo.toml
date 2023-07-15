@@ -3,11 +3,11 @@ members = [
     "node",
     "pallets/verifier",
     "runtime",
-	"contracts/factors_verifier",
 ]
 
 exclude = [
     "provers",
+	"contracts/factors_verifier",
 ]
 
 [profile.release]
