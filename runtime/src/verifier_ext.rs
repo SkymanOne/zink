@@ -67,6 +67,7 @@ where
 }
 
 /// An experiment to just deserialize the input from the slice and encode it using SCALE
+/// requires the implementation of `Decode` for `SessionReceipt`
 fn deserialize_proof<E: Ext>(env: Environment<E, InitState>) -> DispatchResult
 where
 	<E::T as SysConfig>::AccountId: UncheckedFrom<<E::T as SysConfig>::Hash> + AsRef<[u8]>,
