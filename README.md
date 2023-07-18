@@ -1,12 +1,41 @@
-# Substrate Node Template
+# zink! - risc0 + ink!
 
-A fresh [Substrate](https://substrate.io/) node, ready for hacking :rocket:
+A demo project prepared for the ParisDot talk ("Zero-Knowledge Proofs using ink!").
 
-A standalone version of this template is available for each release of Polkadot in the [Substrate Developer Hub Parachain Template](https://github.com/substrate-developer-hub/substrate-parachain-template/) repository.
-The parachain template is generated directly at each Polkadot release branch from the [Node Template in Substrate](https://github.com/paritytech/substrate/tree/master/bin/node-template) upstream
+The repo contains
+* Substrate node configured with the pallet-contracts and chain extension with the risc0 verifier.
+* [risc0 prover](/provers/factors/)
+* [ink! smart contract](/contracts/factors_verifier/)
 
-It is usually best to use the standalone version to start a new project.
-All bugs, suggestions, and feature requests should be made upstream in the [Substrate](https://github.com/paritytech/substrate/tree/master/bin/node-template) repository.
+## Instructions
+1. Compile the node and run it in the background (or separate shell session)
+```
+cargo build -r
+target/release/zink-node --dev
+```
+2. Go to the [prover](/provers/factors/) and run the proving locally
+```
+cargo run
+```
+3. Copy paste the image ID outputted
+4. Go to the [ink! project](/contracts/factors_verifier/) and compile it (make sure you have `cargo-contract` installed, [instructions](https://github.com/paritytech/cargo-contract))
+```
+cargo contract build --release
+```
+5. Instantiate the contract with the IMAGE ID, generated earlier
+```bash
+cargo contract instantiate --suri //Alice --args "<IMAGE_ID>"
+```
+5. Go back to to the [prover](/provers/factors/) and run the it again with the contract address as an arg to generate the proof and submit it a transaction to the node with it
+```
+cargo run -- --contract-address <address>
+```
+6. (Optional) if you want to verify the result. Go to the ink! project
+```
+cargo contract call --suri //Alice --message "get_status" --contract <contract address>
+```
+
+## The rest of the substrate docs
 
 ## Getting Started
 

@@ -120,7 +120,7 @@ pub fn multiply_factors(a: u64, b: u64) -> (SessionReceipt, u64) {
 struct Args {
 	/// Contract address
 	#[arg(short, long)]
-	contract_address: String,
+	contract_address: Option<String>,
 }
 
 #[tokio::main]
@@ -128,9 +128,6 @@ async fn main() {
 	let args = Args::parse();
 	// Pick two numbers
 	let (receipt, _) = multiply_factors(17, 23);
-	// println!("Receipt size: {}", to_vec(&receipt).unwrap().len());
-
-	let contract_account = AccountId32::from_str(&args.contract_address).unwrap();
 
 	println!("IMAGE_ID {:?}", MULTIPLY_ID);
 
@@ -144,6 +141,9 @@ async fn main() {
 	let receipt2 = receipt2.unwrap();
 
 	assert_eq!(receipt, receipt2);
-	let res = send_receipt(contract_account, &receipt).await;
-	println!("Result: {}", res.is_ok());
+	if let Some(contract_account) = &args.contract_address {
+		let address = AccountId32::from_str(&contract_account).unwrap();
+		let res = send_receipt(address, &receipt).await;
+		println!("Submission result: {}", res.is_ok());
+	}
 }
