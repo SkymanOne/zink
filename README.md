@@ -3,7 +3,7 @@
 A demo project prepared for the ParisDot talk ("Zero-Knowledge Proofs using ink!").
 
 The repo contains
-* Substrate node configured with the pallet-contracts and chain extension with the risc0 verifier.
+* Substrate node configured with the pallet-contracts and [chain extension](/runtime/src/verifier_ext.rs) with the risc0 verifier.
 * [risc0 prover](/provers/factors/)
 * [ink! smart contract](/contracts/factors_verifier/)
 
